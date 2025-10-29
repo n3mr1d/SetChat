@@ -18,8 +18,10 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
+        'last_seen',
+        'is_online',
+        'public_key',
         'password',
     ];
 
@@ -30,7 +32,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -41,8 +42,15 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'username' => 'string',
+            'last_seen' => 'datetime',
+            'is_online' => 'boolean',
             'password' => 'hashed',
         ];
+    }
+
+    protected function message()
+    {
+        return $this->hasMany(Message::class);
     }
 }
