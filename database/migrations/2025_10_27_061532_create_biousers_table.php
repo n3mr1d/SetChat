@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('biousers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('name');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('name')->unique();
+            $table->string('bio')->default('we are a anonymous group');
+            $table->string('website')->nullable();
             $table->string('path_avatar')->nullable();
             $table->string('pgp_public')->nullable();
             $table->string('email')->nullable();
-            $table->string('website')->nullable();
             $table->timestamps();
         });
     }

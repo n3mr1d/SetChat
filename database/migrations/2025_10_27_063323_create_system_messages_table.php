@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('system_messages', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['user_join', 'user_leave', 'room_created', 'settings_changed', 'user_promoted', 'user_demoted', 'user_banned', 'user_unbanned', 'other'])->default('other');
             $table->string('content');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });

@@ -14,11 +14,11 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/login', [GateController::class, 'loginindex'])->name('login');
     Route::post('/login', [GateController::class, 'loginstore'])->name('store.login');
     // register page
-    Route::match(['get', 'post'], '/register', [GateController::class, 'register'])->name('index.register');   // register page
-
+    Route::match(['get', 'post'], '/register', [GateController::class, 'register'])->name('index.register');   // register PAGE
 });
 // Public Room default
 Route::group(['middleware' => 'auth'], function () {
+    Route::post('/logout', [GateController::class, 'logout'])->name('logout');
     Route::get('/room', [PublicRoom::class, 'index'])->name('index.room');
     Route::get('/tools/chat', [PublicRoom::class, 'view'])->name('index.chat');
     Route::match(['get', 'post'], '/tools/send', [PublicRoom::class, 'send'])->name('index.send');

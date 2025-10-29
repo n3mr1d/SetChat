@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('name');
             $table->enum('type', ['public', 'private'])->default('public');
             $table->timestamps();
@@ -21,8 +22,9 @@ return new class extends Migration
 
         Schema::create('room_users', function (Blueprint $table) {
             $table->id();
+            $table->uuid('user_id');
             $table->foreignId('room_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamp('joined_at');
         });
     }

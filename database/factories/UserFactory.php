@@ -26,7 +26,6 @@ class UserFactory extends Factory
             'username' => $this->faker->userName(),
             'last_seen' => $this->faker->dateTime(),
             'password' => static::$password ??= Hash::make('password'),
-            'public_key' => $this->faker->uuid(),
         ];
     }
 }

@@ -1,7 +1,7 @@
 <x-layouts.app title="{{ __('GPG Verification') }}">
     <div class="p-4 max-w-2xl mx-auto">
         <div class="mb-4 p-3 rounded bg-green-100 text-green-800">
-            <strong>{{ __('PGP Challenge Created') }}</strong> —
+            <strong>{{ __('PGP Challenge Created expire at'). session('pgp_token_expires_at')}}</strong> —
             {{ __('Decrypt the message below locally and submit the plaintext token for verification.') }}
         </div>
         <div class="space-y-1 mb-4">
@@ -24,9 +24,15 @@
                 {{ __('Copy the entire content above and decrypt it with your private key to obtain the verification
                 token.') }}
             </p>
+            <form action="{{ route('index.register') }}" method="POST" class="space-y-3">
+                @csrf
+                <input type="hidden" name="action" value="resetgpg">
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                    {{ __('Reset') }}
+                </button>
+            </form>
         </div>
     </div>
-
 
     {{-- Verification form --}}
     <form method="POST" action="{{ route('index.register') }}" class="space-y-3">

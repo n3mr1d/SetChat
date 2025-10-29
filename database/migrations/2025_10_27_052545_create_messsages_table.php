@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->boolean('is_public')->default(false);
             $table->longText('content');
-            // sender
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->uuid('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

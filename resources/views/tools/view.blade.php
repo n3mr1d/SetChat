@@ -12,17 +12,19 @@
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
     <!-- Styles / Scripts -->
-    <meta http-equiv="refresh" content="3">
+    <!-- <meta http-equiv="refresh" content="3"> -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
 
 <body>
     <main>
-        @foreach($msg as $m)
-        <div>{{$m->username->username}}</div>
-        <div>{{$m->content}}</div>
+        @foreach ($messages as $msg)
+        <div class="p-2 rounded {{ $msg['style'] }}">
+            <span>{{$msg['created_at']}}</span> {{$msg['username']}} : {{$msg['content']}}
+        </div>
         @endforeach
+
     </main>
 </body>
 

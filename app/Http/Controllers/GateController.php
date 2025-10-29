@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Biouser;
+use App\Models\SystemMessage;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -30,7 +32,6 @@ class GateController extends Controller
     public function loginstore(Request $request)
     {
         // validate
-
         $validate = $request->validate([
             'username' => 'required|string|max:255|min:4',
             'password' => 'required|string|max:255',
@@ -38,7 +39,14 @@ class GateController extends Controller
         if (Auth::attempt($validate)) {
             $user = User::find(Auth::user()->id);
             $user->is_online = true;
+            $user->last_seen = Carbon::now();
             $user->save();
+            // create system message
+            SystemMessage::create([
+                'type' => 'user_join',
+                'content' => "$user->username entered the chat.",
+
+            ]);
 
             return redirect()->route('index.room');
         } else {
@@ -102,7 +110,12 @@ class GateController extends Controller
                     ]);
                 }
             }
+            if ($action === 'resetgpg') {
+                $this->clearsession($request);
 
+                return redirect()->route('index.register');
+
+            }
             if ($action === 'verify') {
                 $enteredToken = $request->validate([
                     'pgp_decrypted_token' => 'required|string',
@@ -135,11 +148,21 @@ class GateController extends Controller
                     $storage = Storage::disk('public');
                     $uuid = Str::uuid();
                     $storage->put("gpg/$username-$uuid.txt", $pgpPublic);
+                    // setup bio model
+
+                    // setup user model
                     $user = User::create([
                         'username' => $username,
                         'password' => $password,
-                        'public_key' => Storage::url("/gpg/$username-$uuid.txt"),
                         'is_online' => true,
+                        'last_seen' => Carbon::now(),
+                    ]);
+                    $bio = Biouser::create([
+                        'user_id' => $user->id,
+                        'name' => 'Guest-'.Str::random('10'),
+                        'pgp_public' => Storage::url("/gpg/$username-$uuid.txt"),
+                        'path_avatar' => '/public/avatar/avatar.png',
+
                     ]);
 
                     $this->clearPgpSession();
@@ -148,11 +171,11 @@ class GateController extends Controller
 
                     return redirect()
                         ->route('index.room')
-                        ->with('status', 'Registrasi berhasil — PGP verified.');
+                        ->with('status', 'Registered successfully.');
                 }
 
                 return back()->withInput()->withErrors([
-                    'pgp_decrypted_token' => 'Token tidak cocok. Pastikan Anda telah mendekripsi pesan yang benar.',
+                    'pgp_decrypted_token' => 'Token invalid or expired.',
                 ]);
             }
 
@@ -162,6 +185,11 @@ class GateController extends Controller
         }
 
         return redirect()->route('index.register');
+    }
+
+    protected function clearsession(Request $request): void
+    {
+        $request->session()->flush();
     }
 
     private function clearPgpSession(): void
@@ -174,5 +202,17 @@ class GateController extends Controller
             'pgp_pending_pgp_public',
             'pgp_encrypted_armored',
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->is_online = false;
+        $user->last_seen = Carbon::now();
+        $user->save();
+        Auth::logout();
+        $request->session()->regenerate();
+
+        return redirect('/');
     }
 }

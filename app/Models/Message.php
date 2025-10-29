@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class Message extends Model
 {
@@ -20,6 +21,17 @@ class Message extends Model
         return [
             'is_public' => 'boolean',
         ];
+    }
+
+    // function setContetAttribute
+    protected function setContentAttribute($value)
+    {
+        $this->attributes['content'] = Crypt::encryptString($value);
+    }
+
+    public function getContentAttribute($value)
+    {
+        return Crypt::decryptString($value);
     }
 
     protected function username()

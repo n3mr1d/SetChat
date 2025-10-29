@@ -1,0 +1,88 @@
+erDiagram
+    failed_jobs {
+        int id PK
+        varchar uuid
+        text connection
+        text queue
+        timestamp failed_at
+    }
+    rooms {
+        int id PK
+        varchar name
+        enum type
+        timestamp created_at
+        timestamp updated_at
+    }
+    jobs {
+        int id PK
+        varchar queue
+    }
+    users {
+        int id PK
+        varchar username
+        varchar password
+        boolean is_online
+        timestamp last_seen
+        timestamp created_at
+        timestamp updated_at
+    }
+    room_users {
+        int id PK
+        timestamp joined_at
+    }
+    system_messages {
+        int id PK
+        varchar content
+        timestamp created_at
+        timestamp updated_at
+    }
+    sessions {
+        varchar id PK
+        varchar ip_address
+        text user_agent
+        int last_activity
+    }
+    biousers {
+        int id PK
+        varchar name
+        varchar path_avatar
+        varchar pgp_public
+        varchar email
+        varchar website
+        timestamp created_at
+        timestamp updated_at
+    }
+    job_batches {
+        varchar id PK
+        varchar name
+        int total_jobs
+        int pending_jobs
+        int failed_jobs
+        int cancelled_at
+        int created_at
+        int finished_at
+    }
+    notification_users {
+        int id PK
+        json data
+        boolean is_read
+        enum type
+        timestamp created_at
+        timestamp updated_at
+    }
+    messages {
+        int id PK
+        boolean is_public
+        timestamp created_at
+        timestamp updated_at
+    }
+    cache_locks {
+        varchar key
+        varchar owner
+        int expiration
+    }
+    cache {
+        varchar key
+        int expiration
+    }
+

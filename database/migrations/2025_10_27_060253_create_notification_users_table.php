@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('notification_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('recever_id')->constrained('users')->onDelete('cascade');
+            $table->uuid('user_id');
+            $table->uuid('recever_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('recever_id')->references('id')->on('users')->onDelete('cascade');
             $table->json('data');
             $table->boolean('is_read')->default(false);
             $table->enum('type', ['system', 'user']);
